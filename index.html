@@ -11,7 +11,7 @@
         * { box-sizing: border-box; font-family: 'SF Pro Display', -apple-system, sans-serif; -webkit-user-select: none; }
         body { margin: 0; background: var(--bg); color: var(--txt); height: 100vh; display: flex; overflow: hidden; }
         #aside { width: 320px; background: var(--side); border-right: 1px solid var(--brd); display: flex; flex-direction: column; flex-shrink: 0; }
-        .hdr-brand { padding: 30px 20px; font-weight: 900; color: var(--acc); font-size: 20px; text-transform: uppercase; letter-spacing: 2px; -webkit-app-region: drag; }
+        .hdr-brand { padding: 30px 20px; font-weight: 900; color: var(--acc); font-size: 20px; text-transform: uppercase; letter-spacing: 2px; }
         .search-area { padding: 15px; }
         .search-area input { width: 100%; background: #000; border: 1px solid #333; padding: 12px; color: #fff; border-radius: 10px; outline: none; -webkit-user-select: text; }
         #u-list { flex: 1; overflow-y: auto; padding: 10px; }
@@ -108,7 +108,14 @@
 </div>
 
 <script>
-    const gun = Gun(['https://gun-manhattan.herokuapp.com/gun', 'https://relay.peer.ooo/gun']);
+    // РАСШИРЕННЫЙ СПИСОК СЕРВЕРОВ ДЛЯ СИНХРОНИЗАЦИИ
+    const gun = Gun([
+        'https://gun-manhattan.herokuapp.com/gun',
+        'https://relay.peer.ooo/gun',
+        'https://gun-us.herokuapp.com/gun',
+        'https://gun-eu.herokuapp.com/gun',
+        'https://gunjs.herokuapp.com/gun'
+    ]);
     const db = gun.get('ZIVO_PELMEN_STATION_X_10');
 
     let myNick = localStorage.getItem('p10_nick') || "User" + Math.floor(Math.random()*999);
@@ -150,7 +157,10 @@
 
     function createRoom() {
         const n = prompt("Название комнаты (дайте его другу):");
-        if(n) join(n.replace(/\s+/g, '_').toLowerCase(), n);
+        if(n) {
+            const id = n.replace(/\s+/g, '_').toLowerCase();
+            join(id, "Комната: " + n);
+        }
     }
 
     function send() {
@@ -191,7 +201,6 @@
         document.getElementById('room-title').innerText = title;
         document.getElementById('msgs').innerHTML = '';
         db.get('rooms').get(id).get('msgs').map().on(render);
-        document.querySelectorAll('.u-card').forEach(c => c.classList.remove('active'));
     }
 
     function handleFile(input, mode) {
